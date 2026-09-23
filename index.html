@@ -3,7 +3,7 @@
 <meta name="theme-color" content="#0f172a"><link rel="manifest" href="manifest.webmanifest">
 <title>Controle de IMC 2.0</title>
 <style>
-:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;--p:#2563eb}
+:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;--p:#000000}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Arial,sans-serif}
 header{background:linear-gradient(135deg,#0f172a,#1e3a8a);color:white;padding:28px 18px}.wrap{max-width:980px;margin:auto}
 .brand{display:flex;gap:14px;align-items:center}.logo{font-size:28px;background:#ffffff22;padding:12px;border-radius:15px}
@@ -21,7 +21,18 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 7px
 .history{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line)}.small{font-size:12px;color:var(--muted)}.hidden{display:none!important}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:0 18px 35px}
 @media(max-width:700px){.grid{grid-template-columns:1fr}.card{padding:18px}main{padding:13px}}
-</style></head><body>
+
+/* IMC Pro 3.0 */
+:root{--primary:#000;--primary-2:#111}
+.brand-mark{background:#000!important;color:#fff!important;font-size:1.5rem;display:grid;place-items:center;width:48px;height:48px;border-radius:14px}
+.goal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.stat{background:#f6f6f6;border:1px solid #e8e8e8;border-radius:14px;padding:14px}
+.stat span{display:block;color:#666;font-size:.82rem;margin-bottom:5px}.stat strong{font-size:1.25rem}
+.progress{height:12px;background:#e8e8e8;border-radius:999px;overflow:hidden}.progress-bar{height:100%;width:0;background:#000;border-radius:999px;transition:width .3s}
+.chart-wrap{width:100%;margin:16px 0}.credit{margin:28px 0 10px;text-align:center;color:#777;font-size:.82rem}
+@media(max-width:700px){.goal-grid{grid-template-columns:1fr}}
+
+</style></head><body><header class="topbar"><div class="brand-mark">💪</div><strong>IMC Pro</strong></header>
 <header><div class="wrap brand"><div class="logo">⚖️</div><div><h1>Controle de IMC 2.0</h1><p>Acompanhe suas medições de forma simples</p></div></div></header>
 <main class="wrap">
 <div class="grid">
@@ -46,10 +57,43 @@ function calc(){let h=num('height'),w=num('weight'),age=parseInt($('age').value)
 function hist(){return JSON.parse(localStorage.getItem('imc20')||'[]')}
 function save(){if(!last)return;let a=hist();a.unshift(last);localStorage.setItem('imc20',JSON.stringify(a.slice(0,100)));render();alert('Medição salva no histórico.')}
 function render(){let a=hist();$('total').textContent=a.length;$('latest').textContent=a.length?a[0].bmi.toFixed(1).replace('.',','):'—';$('avg').textContent=a.length?(a.reduce((s,x)=>s+x.bmi,0)/a.length).toFixed(1).replace('.',','):'—';$('clear').classList.toggle('hidden',!a.length);$('history').innerHTML=a.length?a.map(x=>'<div class="history"><div><b>'+x.bmi.toFixed(1).replace('.',',')+' — '+cls(x.bmi)[0]+'</b><div class="small">'+x.display+(x.name?' • '+safe(x.name):'')+'</div></div><div class="small">'+x.weight+' kg / '+x.height+' m</div></div>').join(''):'<div class="empty">Nenhuma medição salva ainda.</div>';chart(a)}
-function chart(a){let c=$('chart'),e=$('empty');if(a.length<2){c.classList.add('hidden');e.classList.remove('hidden');return}c.classList.remove('hidden');e.classList.add('hidden');let x=c.getContext('2d'),w=c.width,h=c.height,p=45,v=[...a].reverse().map(z=>z.bmi),mn=Math.floor(Math.min(...v,18)),mx=Math.ceil(Math.max(...v,30));x.clearRect(0,0,w,h);x.strokeStyle='#cbd5e1';x.fillStyle='#64748b';x.font='12px Arial';for(let i=0;i<5;i++){let y=p+i*45,val=mx-i*(mx-mn)/4;x.beginPath();x.moveTo(p,y);x.lineTo(w-15,y);x.stroke();x.fillText(val.toFixed(1),5,y+4)}let ph=180,pw=w-p-15;x.strokeStyle='#2563eb';x.lineWidth=3;x.beginPath();v.forEach((z,i)=>{let xx=p+i*pw/(v.length-1),yy=p+(mx-z)*ph/(mx-mn);i?x.lineTo(xx,yy):x.moveTo(xx,yy)});x.stroke();x.fillStyle='#2563eb';v.forEach((z,i)=>{let xx=p+i*pw/(v.length-1),yy=p+(mx-z)*ph/(mx-mn);x.beginPath();x.arc(xx,yy,5,0,7);x.fill()})}
+function chart(a){let c=$('chart'),e=$('empty');if(a.length<2){c.classList.add('hidden');e.classList.remove('hidden');return}c.classList.remove('hidden');e.classList.add('hidden');let x=c.getContext('2d'),w=c.width,h=c.height,p=45,v=[...a].reverse().map(z=>z.bmi),mn=Math.floor(Math.min(...v,18)),mx=Math.ceil(Math.max(...v,30));x.clearRect(0,0,w,h);x.strokeStyle='#cbd5e1';x.fillStyle='#64748b';x.font='12px Arial';for(let i=0;i<5;i++){let y=p+i*45,val=mx-i*(mx-mn)/4;x.beginPath();x.moveTo(p,y);x.lineTo(w-15,y);x.stroke();x.fillText(val.toFixed(1),5,y+4)}let ph=180,pw=w-p-15;x.strokeStyle='#000000';x.lineWidth=3;x.beginPath();v.forEach((z,i)=>{let xx=p+i*pw/(v.length-1),yy=p+(mx-z)*ph/(mx-mn);i?x.lineTo(xx,yy):x.moveTo(xx,yy)});x.stroke();x.fillStyle='#000000';v.forEach((z,i)=>{let xx=p+i*pw/(v.length-1),yy=p+(mx-z)*ph/(mx-mn);x.beginPath();x.arc(xx,yy,5,0,7);x.fill()})}
 function clearHistory(){if(confirm('Apagar todo o histórico deste dispositivo?')){localStorage.removeItem('imc20');render()}}
 function clearForm(){$('name').value='';$('age').value='';$('height').value='';$('weight').value='';$('result').classList.add('hidden');last=null}
 function safe(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function csv(){let a=hist();if(!a.length){alert('Não há medições para exportar.');return}let s='Data,Nome,Idade,Altura,Peso,IMC,Classificação\n'+a.map(x=>[x.display,x.name,x.age,x.height,x.weight,x.bmi.toFixed(1),cls(x.bmi)[0]].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'),u=URL.createObjectURL(new Blob([s],{type:'text/csv;charset=utf-8'})),a1=document.createElement('a');a1.href=u;a1.download='historico-imc.csv';a1.click();URL.revokeObjectURL(u)}
 render();
-</script></body></html>
+</script>
+<script>
+(function(){
+const KEY='imc20', $=id=>document.getElementById(id);
+function data(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return[]}}
+function fmt(n){return Number(n).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}
+function draw(c,vals,labels,title){
+ if(!c)return; const ctx=c.getContext('2d'), W=c.clientWidth||600,H=220;
+ c.width=W*2;c.height=H*2;ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,W,H);
+ ctx.fillStyle='#111';ctx.font='bold 14px Arial';ctx.fillText(title,0,16);
+ if(!vals.length){ctx.fillStyle='#777';ctx.font='13px Arial';ctx.fillText('Faça medições para visualizar a evolução.',30,70);return}
+ const p=34,min=Math.min(...vals),max=Math.max(...vals),r=max-min||1;
+ ctx.strokeStyle='#ddd';ctx.beginPath();ctx.moveTo(p,25);ctx.lineTo(p,H-30);ctx.lineTo(W-12,H-30);ctx.stroke();
+ ctx.strokeStyle='#000';ctx.lineWidth=2.5;ctx.beginPath();
+ vals.forEach((v,i)=>{let x=p+i*(W-p-16)/Math.max(1,vals.length-1),y=H-30-(v-min)/r*(H-65);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
+ ctx.stroke();ctx.fillStyle='#000';
+ vals.forEach((v,i)=>{let x=p+i*(W-p-16)/Math.max(1,vals.length-1),y=H-30-(v-min)/r*(H-65);ctx.beginPath();ctx.arc(x,y,4,0,7);ctx.fill();if(i===0||i===vals.length-1){ctx.fillStyle='#666';ctx.font='11px Arial';ctx.textAlign='center';ctx.fillText(labels[i],x,H-10);ctx.fillStyle='#000'}})
+}
+function update(){
+ const d=data().slice().sort((a,b)=>new Date(a.date)-new Date(b.date)), last=d[d.length-1];
+ let goal=parseFloat($('goal')?.value); if(!isFinite(goal)&&last)goal=parseFloat(last.goal);
+ let cur=last?parseFloat(last.weight):NaN;
+ $('goalCurrent').textContent=isFinite(cur)?fmt(cur)+' kg':'—'; $('goalTarget').textContent=isFinite(goal)?fmt(goal)+' kg':'—';
+ if(isFinite(cur)&&isFinite(goal)){let diff=Math.abs(cur-goal),start=d.length?parseFloat(d[0].weight):cur,den=Math.abs(start-goal)||1,p=Math.max(0,Math.min(100,100*(1-diff/den)));$('goalRemaining').textContent=fmt(diff)+' kg';$('goalProgress').style.width=p+'%';$('goalMessage').textContent=diff<.1?'Meta atingida!':cur>goal?'Você está '+fmt(diff)+' kg acima da meta.':'Você está '+fmt(diff)+' kg abaixo da meta.'}
+ else{$('goalRemaining').textContent='—';$('goalProgress').style.width='0%';$('goalMessage').textContent='Defina uma meta de peso para acompanhar seu progresso.'}
+ let labels=d.map(x=>new Date(x.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}));
+ draw($('weightChart'),d.map(x=>parseFloat(x.weight)).filter(isFinite),labels,'Peso (kg)');
+ draw($('bmiChart'),d.map(x=>parseFloat(x.bmi)).filter(isFinite),labels,'IMC');
+}
+document.addEventListener('input',e=>{if(e.target.id==='goal')update()});window.addEventListener('load',update);
+})();
+</script>
+<footer class="credit">Desenvolvedor Daniel Marques via IA</footer>
+</body></html>
