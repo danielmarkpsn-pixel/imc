@@ -1,3 +1,3 @@
-# Controle de IMC — Web
-Abra `index.html` em um navegador ou publique os arquivos em GitHub Pages, Netlify ou Cloudflare Pages.
-O histórico fica somente no navegador/dispositivo usando localStorage.
+# Controle de IMC 2.0
+
+Versão web responsiva com cálculo, histórico local, gráfico de evolução, resumo e exportação CSV. Substitua os arquivos do seu repositório GitHub Pages por estes. Os dados ficam somente no navegador usando localStorage.
