@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#2563eb">
+<title>Controle de IMC</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#172033;font-family:Arial,sans-serif}
+main{max-width:720px;margin:auto;padding:22px 15px 40px}.card{background:#fff;border-radius:16px;padding:22px;margin:14px 0;box-shadow:0 5px 20px #0001}
+h1{margin:0 0 6px}.muted{color:#64748b}label{display:block;font-weight:bold;margin:15px 0 6px}
+input{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:9px;font-size:17px}
+button{padding:12px 17px;border:0;border-radius:9px;font-weight:bold;cursor:pointer}.primary{background:#2563eb;color:white}.secondary{background:#e2e8f0}
+.actions{display:flex;gap:10px;margin-top:18px}.result{text-align:center}.bmi{font-size:46px;font-weight:bold;margin:8px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px;border-bottom:1px solid #e2e8f0}
+.history{padding:10px 0;border-bottom:1px solid #e2e8f0}.hidden{display:none}
+</style>
+</head>
+<body><main>
+<section class="card"><h1>Controle de IMC</h1><p class="muted">Calcule e acompanhe seu Índice de Massa Corporal.</p>
+<label for="h">Altura (metros)</label><input id="h" type="number" inputmode="decimal" step="0.01" placeholder="Ex.: 1,75">
+<label for="w">Peso (kg)</label><input id="w" type="number" inputmode="decimal" step="0.1" placeholder="Ex.: 75">
+<div class="actions"><button class="primary" onclick="calc()">Calcular IMC</button><button class="secondary" onclick="clearForm()">Limpar</button></div>
+</section>
+<section id="result" class="card result hidden"><div class="muted">Seu IMC</div><div id="bmi" class="bmi">—</div><strong id="class"></strong><p id="detail" class="muted"></p><button class="secondary" onclick="save()">Salvar no histórico</button></section>
+<section class="card"><h2>Classificação para adultos</h2><table><tr><th>IMC</th><th>Classificação</th></tr><tr><td>Abaixo de 18,5</td><td>Abaixo do peso</td></tr><tr><td>18,5 – 24,9</td><td>Peso adequado</td></tr><tr><td>25,0 – 29,9</td><td>Sobrepeso</td></tr><tr><td>30,0 ou mais</td><td>Obesidade</td></tr></table></section>
+<section class="card"><h2>Histórico</h2><div id="history"></div><button id="clearHist" class="secondary hidden" onclick="clearHistory()">Apagar histórico</button></section>
+<section class="card"><p class="muted"><strong>Importante:</strong> o IMC é uma medida de triagem e não substitui avaliação profissional. As faixas acima são destinadas a adultos.</p></section>
+</main>
+<script>
+let last=null;
+const n=id=>parseFloat(document.getElementById(id).value.replace(',','.'));
+function calc(){let h=n('h'),w=n('w');if(!isFinite(h)||!isFinite(w)||h<.5||h>2.8||w<2||w>500){alert('Informe altura entre 0,50 e 2,80 m e peso entre 2 e 500 kg.');return}let b=w/(h*h),c=b<18.5?'Abaixo do peso':b<25?'Peso adequado':b<30?'Sobrepeso':'Obesidade';last={b,h,w,c,date:new Date().toLocaleString('pt-BR')};document.getElementById('bmi').textContent=b.toFixed(1).replace('.',',');document.getElementById('class').textContent=c;document.getElementById('detail').textContent=w+' kg • '+h+' m';document.getElementById('result').classList.remove('hidden')}
+function save(){if(!last)return;let a=JSON.parse(localStorage.getItem('imc')||'[]');a.unshift(last);localStorage.setItem('imc',JSON.stringify(a.slice(0,30)));render()}
+function render(){let a=JSON.parse(localStorage.getItem('imc')||'[]'),box=document.getElementById('history'),btn=document.getElementById('clearHist');if(!a.length){box.innerHTML='<p class="muted">Nenhuma medição salva.</p>';btn.classList.add('hidden');return}box.innerHTML=a.map(x=>'<div class="history"><b>IMC '+x.b.toFixed(1).replace('.',',')+'</b><br><span class="muted">'+x.c+' • '+x.date+'</span></div>').join('');btn.classList.remove('hidden')}
+function clearHistory(){if(confirm('Apagar o histórico?')){localStorage.removeItem('imc');render()}}
+function clearForm(){h.value='';w.value='';result.classList.add('hidden');last=null}
+render();
+</script></body></html>
